@@ -1,0 +1,11 @@
+[build]
+builder = "nix"
+
+[deploy]
+startCommand = "npm start"
+
+[[services]]
+name = "backend"
+root = "server"
+buildCommand = "npm run build"
+startCommand = "npm start"
