@@ -10,3 +10,7 @@ export const triggerIngestSchema = z.object({
   collisionDetected: z.boolean().optional(),
   proofImageUrl: z.string().url().optional()
 });
+
+export const triggerEvaluateSchema = z.object({
+  scope: z.string().min(2).default("global")
+});

@@ -6,6 +6,11 @@ export class TriggerController {
     const result = await triggerService.ingest(req.auth!.userId, req.body);
     res.status(201).json(result);
   }
+
+  async evaluate(req: Request, res: Response) {
+    const result = await triggerService.evaluateAutomatedTriggers(req.auth!.userId, req.body.scope);
+    res.status(201).json(result);
+  }
 }
 
 export const triggerController = new TriggerController();

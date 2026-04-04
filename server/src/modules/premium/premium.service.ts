@@ -6,37 +6,48 @@ type QuoteInput = {
   weeklyHours: number;
   coverageLimit: number;
   deductible: number;
+  hyperLocalZoneRisk?: number;
+  predictiveWeatherIndex?: number;
+  safeZone?: boolean;
 };
 
 const typeBase: Record<QuoteInput["policyType"], number> = {
-  weather: 18,
-  delay: 12,
-  accident: 22
+  weather: 16,
+  delay: 11,
+  accident: 20
 };
 
 export class PremiumService {
   quote(input: QuoteInput) {
     const base = typeBase[input.policyType];
     const coverageFactor = input.coverageLimit / 1000;
-    const regionFactor = 1 + input.regionRiskIndex * 0.5;
-    const weatherFactor = 1 + input.weatherRiskIndex * 0.45;
+    const zoneRisk = input.hyperLocalZoneRisk ?? input.regionRiskIndex;
+    const forecastIndex = input.predictiveWeatherIndex ?? input.weatherRiskIndex;
+    const regionFactor = 1 + input.regionRiskIndex * 0.35;
+    const zoneFactor = 1 + zoneRisk * 0.3;
+    const weatherFactor = 1 + forecastIndex * 0.35;
     const claimsFactor = 1 + input.claimHistoryRate * 0.7;
     const utilizationFactor = 1 + Math.max(0, input.weeklyHours - 30) / 100;
     const deductibleDiscount = Math.min(0.35, input.deductible / 3000);
+    const safeZoneDiscount = input.safeZone ? 2 : 0;
+    const coverageHoursBoost = input.predictiveWeatherIndex !== undefined ? Math.round((1 - input.predictiveWeatherIndex) * 4) : 0;
 
-    const gross = base * coverageFactor * regionFactor * weatherFactor * claimsFactor * utilizationFactor;
-    const premium = Number((gross * (1 - deductibleDiscount)).toFixed(2));
+    const gross = base * coverageFactor * regionFactor * zoneFactor * weatherFactor * claimsFactor * utilizationFactor;
+    const weeklyPremium = Number(Math.max(6, gross * (1 - deductibleDiscount) - safeZoneDiscount).toFixed(2));
 
     return {
-      premium,
+      premium: weeklyPremium,
       breakdown: {
         base,
         coverageFactor,
         regionFactor,
+        zoneFactor,
         weatherFactor,
         claimsFactor,
         utilizationFactor,
-        deductibleDiscount
+        deductibleDiscount,
+        safeZoneDiscount,
+        coverageHoursBoost
       }
     };
   }

@@ -7,5 +7,8 @@ export const premiumQuoteSchema = z.object({
   claimHistoryRate: z.number().min(0).max(1),
   weeklyHours: z.number().min(1).max(80),
   coverageLimit: z.number().min(100),
-  deductible: z.number().min(0).max(1000)
+  deductible: z.number().min(0).max(1000),
+  hyperLocalZoneRisk: z.number().min(0).max(1).optional(),
+  predictiveWeatherIndex: z.number().min(0).max(1).optional(),
+  safeZone: z.boolean().optional()
 });

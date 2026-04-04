@@ -2,7 +2,16 @@ import { RowDataPacket, ResultSetHeader } from "mysql2";
 import { getDb } from "../../config/db.js";
 import { AppError } from "../../utils/appError.js";
 import { writeAuditEvent } from "../audit/audit.service.js";
-import { accidentTelemetryAdapter, deliveryDelayAdapter, weatherRiskAdapter } from "./trigger.providers.js";
+import {
+  accidentTelemetryAdapter,
+  deliveryDelayAdapter,
+  getAccidentSignal,
+  getOrderFailureSignal,
+  getTrafficDelaySignal,
+  getWaterLoggingSignal,
+  getWeatherSignal,
+  weatherRiskAdapter
+} from "./trigger.providers.js";
 
 const thresholds = {
   weather: 0.65,
@@ -112,6 +121,59 @@ export class TriggerService {
     });
 
     return { triggered: true, score, threshold, claim };
+  }
+
+  async evaluateAutomatedTriggers(userId: string, scope: string) {
+    const signals = [
+      getWeatherSignal(scope),
+      getWaterLoggingSignal(scope),
+      getTrafficDelaySignal(scope),
+      getAccidentSignal(scope),
+      getOrderFailureSignal(scope)
+    ];
+
+    const results = [] as Array<{ source: string; triggered: boolean; reason?: string; claimId?: string }>;
+    for (const signal of signals) {
+      const result = await this.ingest(userId, {
+        policyId: await this.findLatestActivePolicyId(userId),
+        eventKey: signal.eventKey,
+        triggerType: signal.triggerType,
+        severity: signal.severity,
+        delayMinutes: signal.delayMinutes,
+        weatherRiskIndex: signal.weatherRiskIndex,
+        collisionDetected: signal.collisionDetected
+      });
+
+      results.push({
+        source: signal.source,
+        triggered: result.triggered,
+        reason: result.reason,
+        claimId: result.triggered && result.claim ? result.claim._id : undefined
+      });
+    }
+
+    await writeAuditEvent({
+      userId,
+      action: "trigger.automated.evaluate",
+      resourceType: "trigger",
+      resourceId: scope,
+      metadata: { evaluated: results.length }
+    });
+
+    return { scope, results };
+  }
+
+  private async findLatestActivePolicyId(userId: string) {
+    const db = getDb();
+    const [rows] = await db.query<RowDataPacket[]>(
+      "SELECT id FROM policies WHERE user_id = ? AND status = 'active' ORDER BY created_at DESC LIMIT 1",
+      [userId]
+    );
+    const policyId = rows[0]?.id;
+    if (!policyId) {
+      throw new AppError("No active policy found for automated trigger evaluation", 400);
+    }
+    return String(policyId);
   }
 
   private computeScore(payload: {

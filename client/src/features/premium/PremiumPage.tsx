@@ -14,7 +14,10 @@ export function PremiumPage() {
     claimHistoryRate: 0.2,
     weeklyHours: 35,
     coverageLimit: 1500,
-    deductible: 120
+    deductible: 120,
+    hyperLocalZoneRisk: 0.3,
+    predictiveWeatherIndex: 0.4,
+    safeZone: false
   });
   const [quote, setQuote] = useState<QuoteResponse | null>(null);
 
@@ -27,7 +30,7 @@ export function PremiumPage() {
   return (
     <section className="page two-col">
       <div className="card">
-        <h1>Dynamic Premium Calculator</h1>
+        <h1>Dynamic Weekly Premium Calculator</h1>
         <form className="stack-form" onSubmit={calculate}>
           <label>Policy Type
             <select value={form.policyType} onChange={(e) => setForm((prev) => ({ ...prev, policyType: e.target.value }))}>
@@ -42,6 +45,9 @@ export function PremiumPage() {
           <label>Weekly Hours<input type="number" min={1} max={80} value={form.weeklyHours} onChange={(e) => setForm((prev) => ({ ...prev, weeklyHours: Number(e.target.value) }))} /></label>
           <label>Coverage Limit<input type="number" min={100} value={form.coverageLimit} onChange={(e) => setForm((prev) => ({ ...prev, coverageLimit: Number(e.target.value) }))} /></label>
           <label>Deductible<input type="number" min={0} max={1000} value={form.deductible} onChange={(e) => setForm((prev) => ({ ...prev, deductible: Number(e.target.value) }))} /></label>
+          <label>Hyper-local Zone Risk (0-1)<input type="number" step="0.01" min={0} max={1} value={form.hyperLocalZoneRisk} onChange={(e) => setForm((prev) => ({ ...prev, hyperLocalZoneRisk: Number(e.target.value) }))} /></label>
+          <label>Predictive Weather Index (0-1)<input type="number" step="0.01" min={0} max={1} value={form.predictiveWeatherIndex} onChange={(e) => setForm((prev) => ({ ...prev, predictiveWeatherIndex: Number(e.target.value) }))} /></label>
+          <label className="checkbox"><input type="checkbox" checked={form.safeZone} onChange={(e) => setForm((prev) => ({ ...prev, safeZone: e.target.checked }))} /> Safe water-logging zone</label>
           <button type="submit">Calculate Premium</button>
         </form>
       </div>
@@ -51,7 +57,7 @@ export function PremiumPage() {
         {!quote && <p>Run a calculation to inspect the premium breakdown.</p>}
         {quote && (
           <>
-            <p className="headline">Monthly Premium: INR {quote.premium}</p>
+            <p className="headline">Weekly Premium: INR {quote.premium}</p>
             <ul className="metric-list">
               {Object.entries(quote.breakdown).map(([key, value]) => (
                 <li key={key}><span>{key}</span><strong>{Number(value).toFixed(3)}</strong></li>
