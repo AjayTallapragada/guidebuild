@@ -1,10 +1,4 @@
-import { RowDataPacket } from "mysql2";
-import { getDb } from "../../config/db.js";
-import { triggerService } from "./trigger.service.js";
-
-type ActivePolicyOwnerRow = RowDataPacket & {
-  user_id: number;
-};
+import { runAutomatedTriggerSweep } from "./trigger.sweep.js";
 
 export class TriggerScheduler {
   private intervalId: NodeJS.Timeout | null = null;
@@ -35,15 +29,7 @@ export class TriggerScheduler {
 
     this.isRunning = true;
     try {
-      const db = getDb();
-      const [rows] = await db.query<ActivePolicyOwnerRow[]>(
-        "SELECT DISTINCT user_id FROM policies WHERE status = 'active'"
-      );
-
-      for (const row of rows) {
-        const userId = String(row.user_id);
-        await triggerService.evaluateAutomatedTriggers(userId, userId);
-      }
+      await runAutomatedTriggerSweep();
     } catch (error) {
       console.error("Automated trigger scheduler failed", error);
     } finally {

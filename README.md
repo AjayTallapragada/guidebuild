@@ -122,3 +122,46 @@ npm run lint -w server
 npm run typecheck -w client
 npm run lint -w client
 ```
+
+## Deploy Everything to Vercel
+
+Use two Vercel projects from the same GitHub repository.
+
+### 1) Deploy backend (Serverless API)
+- Create a Vercel project with root directory set to `server`.
+- Framework preset: `Other`.
+- Vercel will serve:
+  - `api/[[...route]].ts` as your API handler
+  - `api/cron/trigger-sweep.ts` as a cron endpoint
+- Add environment variables:
+  - `MYSQL_HOST`
+  - `MYSQL_PORT`
+  - `MYSQL_USER`
+  - `MYSQL_PASSWORD`
+  - `MYSQL_DATABASE`
+  - `JWT_ACCESS_SECRET`
+  - `JWT_REFRESH_SECRET`
+  - `JWT_ACCESS_TTL`
+  - `JWT_REFRESH_TTL`
+  - `CLIENT_ORIGIN` (frontend URL)
+  - `CRON_SECRET` (required for secure cron calls)
+
+Notes:
+- The serverless API still uses `/api/v1/*` routes.
+- Cron schedule is configured in `server/vercel.json` (`*/5 * * * *`).
+
+### 2) Deploy frontend (Vite SPA)
+- Create a second Vercel project with root directory set to `client`.
+- Framework preset: `Vite`.
+- Add environment variable:
+  - `VITE_API_URL=https://<your-backend-project>.vercel.app/api/v1`
+
+Notes:
+- SPA fallback rewrites are configured in `client/vercel.json`.
+
+### 3) Post-deploy check
+- Open frontend URL and log in.
+- Confirm API health at:
+  - `https://<backend-project>.vercel.app/api/v1/health`
+- Confirm cron endpoint auth works manually:
+  - `GET /api/cron/trigger-sweep` with header `Authorization: Bearer <CRON_SECRET>`

@@ -109,6 +109,10 @@ async function initializeSchema(db: Pool): Promise<void> {
 }
 
 export async function connectDatabase(): Promise<void> {
+  if (pool) {
+    return;
+  }
+
   const bootstrap = await mysql.createConnection({
     host: env.MYSQL_HOST,
     port: env.MYSQL_PORT,
