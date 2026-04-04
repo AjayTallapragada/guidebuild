@@ -10,8 +10,25 @@ import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 
 export const app = express();
 
+const allowedOrigins = env.CLIENT_ORIGIN.split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(helmet());
-app.use(cors({ origin: env.CLIENT_ORIGIN, credentials: true }));
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Allow non-browser clients and same-origin requests without Origin header.
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      callback(null, allowedOrigins.includes(origin));
+    },
+    credentials: true
+  })
+);
 app.use(
   rateLimit({
     windowMs: 60 * 1000,
