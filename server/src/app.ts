@@ -10,8 +10,16 @@ import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 
 export const app = express();
 
+function normalizeOrigin(value: string) {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return value.trim();
+  }
+}
+
 const allowedOrigins = env.CLIENT_ORIGIN.split(",")
-  .map((origin) => origin.trim())
+  .map((origin) => normalizeOrigin(origin))
   .filter(Boolean);
 
 app.use(helmet());
