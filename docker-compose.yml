@@ -5,11 +5,42 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: parametric_insurance
+      MYSQL_DATABASE: devtrail
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: parametric_backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-4000}
+      MYSQL_HOST: ${MYSQL_HOST:-mysql}
+      MYSQL_PORT: ${MYSQL_PORT:-3306}
+      MYSQL_USER: ${MYSQL_USER:-root}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-devtrail}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-replace_with_access_secret_12345}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-replace_with_refresh_secret_12345}
+      JWT_ACCESS_TTL: ${JWT_ACCESS_TTL:-15m}
+      JWT_REFRESH_TTL: ${JWT_REFRESH_TTL:-7d}
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-https://guidebuild-client.vercel.app}
+      CRON_SECRET: ${CRON_SECRET:-replace_with_cron_secret_12345}
+    ports:
+      - "4000:4000"
 
 volumes:
   mysql_data:
