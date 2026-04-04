@@ -11,6 +11,8 @@ coverage/
 .env
 .env.*
 !.env.example
+envfin.env
+**/envfin.env
 **/.env
 **/.env.*
 !**/.env.example
