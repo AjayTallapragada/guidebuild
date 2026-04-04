@@ -1,0 +1,251 @@
+:root {
+  font-family: "Segoe UI", "Avenir Next", sans-serif;
+  line-height: 1.5;
+  color: #10202a;
+  background: radial-gradient(circle at 10% 10%, #ffe8ce 0%, #f5f9fc 35%, #e8f0f4 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.4rem;
+  background: rgba(16, 32, 42, 0.94);
+  color: #f3f7fa;
+  backdrop-filter: blur(8px);
+}
+
+.topbar nav {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.topbar nav a {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  opacity: 0.9;
+  transition: background 0.2s ease;
+}
+
+.topbar nav a.active,
+.topbar nav a:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.brand {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.account-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.page {
+  width: min(1200px, 96vw);
+  margin: 1.2rem auto;
+  display: grid;
+  gap: 1rem;
+}
+
+.two-col {
+  grid-template-columns: 1fr 1fr;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid #d5e2ea;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 14px 32px rgba(16, 32, 42, 0.09);
+}
+
+.card.accent {
+  background: linear-gradient(120deg, #10202a 0%, #18475c 100%);
+  color: #f3f7fa;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.stack-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input,
+select {
+  width: 100%;
+  border: 1px solid #bdd0dc;
+  border-radius: 10px;
+  padding: 0.58rem 0.65rem;
+  background: #fbfeff;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 0.58rem 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #ffffff;
+  background: linear-gradient(120deg, #d95b22, #e88f1f);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.list-stack {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.list-item {
+  border: 1px solid #d5e2ea;
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.status {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.status.active,
+.status.approved,
+.status.processed,
+.status.paid {
+  color: #0f7b4c;
+}
+
+.status.cancelled,
+.status.rejected {
+  color: #a41e24;
+}
+
+.status.queued,
+.status.under_review,
+.status.triggered {
+  color: #9a6216;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.auth-card {
+  width: min(500px, 96vw);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #d5e2ea;
+  border-radius: 18px;
+  padding: 1.2rem;
+  box-shadow: 0 12px 30px rgba(16, 32, 42, 0.12);
+}
+
+.error {
+  color: #a41e24;
+  margin: 0;
+}
+
+.headline {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0.4rem 0;
+}
+
+.metric-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.metric-list li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #d5e2ea;
+  padding-bottom: 0.3rem;
+}
+
+.inline-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 920px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .account-box {
+    justify-content: space-between;
+  }
+}
