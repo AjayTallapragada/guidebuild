@@ -8,7 +8,7 @@ type CatalogPolicy = {
   name: string;
   occasion: string;
   description: string;
-  policyType: "weather" | "delay" | "accident";
+  policyType: "weather" | "delay";
   coverageLimit: number;
   deductible: number;
   monthlyBasePremium: number;
@@ -91,7 +91,6 @@ export function PoliciesPage() {
                 <select value={form.policyType} onChange={(e) => setForm((prev) => ({ ...prev, policyType: e.target.value as Policy["policyType"] }))}>
                   <option value="weather">Weather</option>
                   <option value="delay">Delay</option>
-                  <option value="accident">Accident</option>
                 </select>
               </label>
               <label>Region<input value={form.region} onChange={(e) => setForm((prev) => ({ ...prev, region: e.target.value }))} required /></label>
@@ -99,12 +98,11 @@ export function PoliciesPage() {
                 <select value={form.vehicleType} onChange={(e) => setForm((prev) => ({ ...prev, vehicleType: e.target.value as Policy["vehicleType"] }))}>
                   <option value="bike">Bike</option>
                   <option value="scooter">Scooter</option>
-                  <option value="car">Car</option>
                 </select>
               </label>
               <label>Coverage Limit<input type="number" value={form.coverageLimit} onChange={(e) => setForm((prev) => ({ ...prev, coverageLimit: Number(e.target.value) }))} min={100} /></label>
               <label>Deductible<input type="number" value={form.deductible} onChange={(e) => setForm((prev) => ({ ...prev, deductible: Number(e.target.value) }))} min={0} max={1000} /></label>
-              <label>Monthly Base Premium<input type="number" value={form.monthlyBasePremium} onChange={(e) => setForm((prev) => ({ ...prev, monthlyBasePremium: Number(e.target.value) }))} min={1} /></label>
+              <label>Weekly Base Premium<input type="number" value={form.monthlyBasePremium} onChange={(e) => setForm((prev) => ({ ...prev, monthlyBasePremium: Number(e.target.value) }))} min={1} /></label>
               <button type="submit">Create Policy</button>
             </form>
           </>
@@ -118,7 +116,6 @@ export function PoliciesPage() {
                 <select value={buyVehicleType} onChange={(e) => setBuyVehicleType(e.target.value as Policy["vehicleType"])}>
                   <option value="bike">Bike</option>
                   <option value="scooter">Scooter</option>
-                  <option value="car">Car</option>
                 </select>
               </label>
             </div>

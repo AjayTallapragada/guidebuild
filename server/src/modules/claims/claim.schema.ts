@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createClaimSchema = z.object({
   policyId: z.string().min(1),
-  triggerType: z.enum(["weather", "delay", "accident"]),
+  triggerType: z.enum(["weather", "delay"]),
   reason: z.string().min(5),
   amount: z.number().min(1),
   eventKey: z.string().min(3).optional(),

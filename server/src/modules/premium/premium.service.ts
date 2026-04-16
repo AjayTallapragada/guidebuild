@@ -1,5 +1,5 @@
 type QuoteInput = {
-  policyType: "weather" | "delay" | "accident";
+  policyType: "weather" | "delay";
   regionRiskIndex: number;
   weatherRiskIndex: number;
   claimHistoryRate: number;
@@ -13,8 +13,7 @@ type QuoteInput = {
 
 const typeBase: Record<QuoteInput["policyType"], number> = {
   weather: 16,
-  delay: 11,
-  accident: 20
+  delay: 11
 };
 
 export class PremiumService {

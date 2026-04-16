@@ -40,7 +40,7 @@ export type PrepaidPolicyCatalogItem = {
   name: string;
   occasion: string;
   description: string;
-  policyType: "weather" | "delay" | "accident";
+  policyType: "weather" | "delay";
   coverageLimit: number;
   deductible: number;
   monthlyBasePremium: number;
@@ -56,16 +56,6 @@ const prepaidPolicyCatalog: PrepaidPolicyCatalogItem[] = [
     coverageLimit: 1800,
     deductible: 120,
     monthlyBasePremium: 29
-  },
-  {
-    code: "ACCIDENT_SHIELD",
-    name: "Accident Shield",
-    occasion: "Road incidents and delivery accidents",
-    description: "Protection for delivery accidents and related downtime impact.",
-    policyType: "accident",
-    coverageLimit: 3200,
-    deductible: 180,
-    monthlyBasePremium: 36
   },
   {
     code: "STORM_RUNNER",
@@ -90,9 +80,9 @@ const prepaidPolicyCatalog: PrepaidPolicyCatalogItem[] = [
   {
     code: "NIGHT_SHIFT_PLUS",
     name: "Night Shift Plus",
-    occasion: "Late-night and high-risk zone deliveries",
-    description: "Additional cover for late-hour delivery operations.",
-    policyType: "accident",
+    occasion: "Late-night order slowdown and closure windows",
+    description: "Additional income-loss cover for late-hour delivery operations.",
+    policyType: "delay",
     coverageLimit: 2600,
     deductible: 160,
     monthlyBasePremium: 34
@@ -110,7 +100,7 @@ export class PolicyService {
 
   async buyFromCatalog(
     userId: string,
-    input: { code: string; region: string; vehicleType: "bike" | "scooter" | "car" }
+    input: { code: string; region: string; vehicleType: "bike" | "scooter" }
   ) {
     const item = prepaidPolicyCatalog.find((catalogItem) => catalogItem.code === input.code);
     if (!item) {

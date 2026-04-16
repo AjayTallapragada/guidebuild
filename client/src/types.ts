@@ -13,9 +13,9 @@ export type UserProfile = {
 export type Policy = {
   _id: string;
   name: string;
-  policyType: "weather" | "delay" | "accident";
+  policyType: "weather" | "delay";
   region: string;
-  vehicleType: "bike" | "scooter" | "car";
+  vehicleType: "bike" | "scooter";
   coverageLimit: number;
   deductible: number;
   monthlyBasePremium: number;
@@ -27,7 +27,7 @@ export type Claim = {
   userId?: string;
   policyId: string;
   proofImageUrl?: string;
-  triggerType: "weather" | "delay" | "accident";
+  triggerType: "weather" | "delay";
   triggerScore: number;
   reason: string;
   amount: number;
@@ -62,14 +62,14 @@ export type WorkerDashboardSummary = {
   reviewClaims: number;
   activePolicies: Array<{
     name: string;
-    policyType: "weather" | "delay" | "accident";
+    policyType: "weather" | "delay";
     region: string;
     weeklyPremium: number;
     coverageLimit: number;
   }>;
   recentClaims: Array<{
     id: string;
-    triggerType: "weather" | "delay" | "accident";
+    triggerType: "weather" | "delay";
     amount: number;
     status: Claim["status"];
     fraudScore: number;
@@ -89,7 +89,7 @@ export type AdminDashboardSummary = {
   flaggedClaims: number;
   lossRatio: number;
   triggerMix: Array<{
-    triggerType: "weather" | "delay" | "accident";
+    triggerType: "weather" | "delay";
     claimCount: number;
     amount: number;
   }>;
@@ -101,7 +101,7 @@ export type AdminDashboardSummary = {
   }>;
   nextWeekPrediction: {
     likelyClaims: number;
-    dominantTrigger: "weather" | "delay" | "accident";
+    dominantTrigger: "weather" | "delay";
     projectedLossRatio: number;
     projectedPaidAmount: number;
     recommendation: string;

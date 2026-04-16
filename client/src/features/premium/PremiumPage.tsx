@@ -36,7 +36,6 @@ export function PremiumPage() {
             <select value={form.policyType} onChange={(e) => setForm((prev) => ({ ...prev, policyType: e.target.value }))}>
               <option value="weather">Weather</option>
               <option value="delay">Delay</option>
-              <option value="accident">Accident</option>
             </select>
           </label>
           <label>Region Risk Index (0-1)<input type="number" step="0.01" min={0} max={1} value={form.regionRiskIndex} onChange={(e) => setForm((prev) => ({ ...prev, regionRiskIndex: Number(e.target.value) }))} /></label>

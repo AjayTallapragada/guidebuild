@@ -30,7 +30,7 @@ export function RegisterPage() {
     <section className="auth-page">
       <div className="auth-card">
         <h1>Create Worker Account</h1>
-        <p>Get instant protection for weather, delay, and accident risks.</p>
+        <p>Get weekly income-loss protection for weather and disruption delays.</p>
         <form onSubmit={onSubmit}>
           <label>Full Name<input value={fullName} onChange={(e) => setFullName(e.target.value)} required /></label>
           <label>Email<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required /></label>

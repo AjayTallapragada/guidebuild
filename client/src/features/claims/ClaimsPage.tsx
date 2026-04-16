@@ -8,12 +8,11 @@ type AdminDecisionStatus = "approved" | "rejected";
 
 type TriggerForm = {
   policyId: string;
-  triggerType: "weather" | "delay" | "accident";
+  triggerType: "weather" | "delay";
   severity: number;
   scope: string;
   delayMinutes: number;
   weatherRiskIndex: number;
-  collisionDetected: boolean;
   gpsDriftMeters: number;
   travelSpeedKph: number;
   proofImageUrl: string;
@@ -26,7 +25,6 @@ const initialTriggerForm: TriggerForm = {
   scope: "Bengaluru Central",
   delayMinutes: 45,
   weatherRiskIndex: 0.78,
-  collisionDetected: false,
   gpsDriftMeters: 32,
   travelSpeedKph: 38,
   proofImageUrl: ""
@@ -111,7 +109,6 @@ export function ClaimsPage() {
         scope: triggerForm.scope,
         delayMinutes: Number(triggerForm.delayMinutes),
         weatherRiskIndex: Number(triggerForm.weatherRiskIndex),
-        collisionDetected: triggerForm.collisionDetected,
         gpsDriftMeters: Number(triggerForm.gpsDriftMeters),
         travelSpeedKph: Number(triggerForm.travelSpeedKph),
         proofImageUrl: triggerForm.proofImageUrl.trim() || undefined
@@ -167,7 +164,7 @@ export function ClaimsPage() {
         <div className="card">
           <h1>Simulate a disruption</h1>
           <p>
-            Trigger a fake rainstorm, delay spike, or accident event to test AI approval, fraud checks,
+            Trigger a fake rainstorm, delay spike, or city closure event to test AI approval, fraud checks,
             and payout readiness.
           </p>
           <div className="stack-form">
@@ -201,7 +198,6 @@ export function ClaimsPage() {
               >
                 <option value="weather">Weather</option>
                 <option value="delay">Delay</option>
-                <option value="accident">Accident</option>
               </select>
             </label>
             <label>Severity (0-1)
@@ -247,14 +243,6 @@ export function ClaimsPage() {
                 value={triggerForm.travelSpeedKph}
                 onChange={(event) => setTriggerForm((current) => ({ ...current, travelSpeedKph: Number(event.target.value) }))}
               />
-            </label>
-            <label className="checkbox">
-              <input
-                type="checkbox"
-                checked={triggerForm.collisionDetected}
-                onChange={(event) => setTriggerForm((current) => ({ ...current, collisionDetected: event.target.checked }))}
-              />
-              Accident telemetry detected
             </label>
             <label>Proof image URL (optional)
               <input

@@ -7,21 +7,13 @@ export function deliveryDelayAdapter(input: { delayMinutes?: number; severity: n
   return Math.max(delayScore, input.severity);
 }
 
-export function accidentTelemetryAdapter(input: { collisionDetected?: boolean; severity: number }): number {
-  if (input.collisionDetected) {
-    return Math.max(0.85, input.severity);
-  }
-  return input.severity;
-}
-
 export type TriggerSignal = {
   source: string;
-  triggerType: "weather" | "delay" | "accident";
+  triggerType: "weather" | "delay";
   severity: number;
   eventKey: string;
   delayMinutes?: number;
   weatherRiskIndex?: number;
-  collisionDetected?: boolean;
 };
 
 function stableSeed(text: string) {
@@ -66,17 +58,6 @@ export function getTrafficDelaySignal(scope: string): TriggerSignal {
     severity: Math.min(1, 0.3 + risk),
     delayMinutes: Math.round(20 + risk * 90),
     eventKey: createEventKey("traffic", scope)
-  };
-}
-
-export function getAccidentSignal(scope: string): TriggerSignal {
-  const risk = stableSeed(`${scope}-accident`);
-  return {
-    source: "mock_safety_api",
-    triggerType: "accident",
-    severity: Math.min(1, 0.4 + risk),
-    collisionDetected: risk > 0.55,
-    eventKey: createEventKey("accident", scope)
   };
 }
 

@@ -56,10 +56,10 @@ function WorkerDashboard({ userName, summary }: { userName: string; summary: Wor
     <section className="page">
       <div className="hero-panel worker">
         <div>
-          <p className="eyebrow">Perfect for your worker</p>
+          <p className="eyebrow">Food delivery income shield</p>
           <h1>{userName}, your weekly earnings shield is live.</h1>
           <p>
-            ParcelShield keeps weather, delay, and accident coverage running in the background so a bad shift
+            ParcelShield keeps weather and disruption-delay income coverage running in the background so a bad shift
             does not wipe out the week.
           </p>
         </div>

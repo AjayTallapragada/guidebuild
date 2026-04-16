@@ -4,9 +4,7 @@ import { AppError } from "../../utils/appError.js";
 import { writeAuditEvent } from "../audit/audit.service.js";
 import { payoutService } from "../payouts/payout.service.js";
 import {
-  accidentTelemetryAdapter,
   deliveryDelayAdapter,
-  getAccidentSignal,
   getOrderFailureSignal,
   getTrafficDelaySignal,
   getWaterLoggingSignal,
@@ -16,8 +14,7 @@ import {
 
 const thresholds = {
   weather: 0.65,
-  delay: 0.6,
-  accident: 0.55
+  delay: 0.6
 } as const;
 
 type PolicyRow = RowDataPacket & {
@@ -95,12 +92,11 @@ export class TriggerService {
   async ingest(userId: string, payload: {
     policyId: string;
     eventKey?: string;
-    triggerType: "weather" | "delay" | "accident";
+    triggerType: "weather" | "delay";
     severity: number;
     scope?: string;
     delayMinutes?: number;
     weatherRiskIndex?: number;
-    collisionDetected?: boolean;
     gpsDriftMeters?: number;
     travelSpeedKph?: number;
     proofImageUrl?: string;
@@ -202,7 +198,6 @@ export class TriggerService {
       getWeatherSignal(scope),
       getWaterLoggingSignal(scope),
       getTrafficDelaySignal(scope),
-      getAccidentSignal(scope),
       getOrderFailureSignal(scope)
     ];
 
@@ -214,8 +209,7 @@ export class TriggerService {
         triggerType: signal.triggerType,
         severity: signal.severity,
         delayMinutes: signal.delayMinutes,
-        weatherRiskIndex: signal.weatherRiskIndex,
-        collisionDetected: signal.collisionDetected
+        weatherRiskIndex: signal.weatherRiskIndex
       });
 
       results.push({
@@ -251,21 +245,15 @@ export class TriggerService {
   }
 
   private computeScore(payload: {
-    triggerType: "weather" | "delay" | "accident";
+    triggerType: "weather" | "delay";
     severity: number;
     delayMinutes?: number;
     weatherRiskIndex?: number;
-    collisionDetected?: boolean;
   }) {
     if (payload.triggerType === "weather") {
       return weatherRiskAdapter({ weatherRiskIndex: payload.weatherRiskIndex, severity: payload.severity });
     }
-
-    if (payload.triggerType === "delay") {
-      return deliveryDelayAdapter({ delayMinutes: payload.delayMinutes, severity: payload.severity });
-    }
-
-    return accidentTelemetryAdapter({ collisionDetected: payload.collisionDetected, severity: payload.severity });
+    return deliveryDelayAdapter({ delayMinutes: payload.delayMinutes, severity: payload.severity });
   }
 
   private computePayoutAmount(coverageLimit: number, triggerScore: number, deductible: number) {
@@ -274,7 +262,7 @@ export class TriggerService {
   }
 
   private composeReason(
-    triggerType: "weather" | "delay" | "accident",
+    triggerType: "weather" | "delay",
     score: number,
     fraudReview: FraudReview
   ) {
@@ -289,7 +277,7 @@ export class TriggerService {
   }
 
   private evaluateFraud(input: {
-    triggerType: "weather" | "delay" | "accident";
+    triggerType: "weather" | "delay";
     scope: string;
     weatherRiskIndex?: number;
     gpsDriftMeters?: number;

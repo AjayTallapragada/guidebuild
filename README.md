@@ -1,6 +1,13 @@
-# AI-Powered Parametric Insurance for Delivery Workers
+# AI-Powered Parametric Income-Loss Insurance for Food Delivery Workers
 
 Production-style full-stack monorepo for a parametric insurance platform with role-based operations for workers and admins.
+
+## Compliance Scope (Guidewire DEVTrails 2026)
+- Persona: food delivery worker
+- Coverage: income-loss only
+- Excluded: health, life, accident, and vehicle repair coverage
+- Pricing cadence: weekly
+- Disruptions covered: environmental and social-delay events
 
 ## Tech Stack
 - Frontend: React + TypeScript + Vite
@@ -14,7 +21,7 @@ Production-style full-stack monorepo for a parametric insurance platform with ro
 - Browse prepaid policy catalog and buy policies
 - View own active policies
 - Cancel own policies
-- Simulate trigger events to generate claims
+- Simulate weather and social-delay trigger events to generate claims
 - Run automated disruption sweeps for a delivery zone
 - Optionally attach proof image URL while creating trigger claim
 - Track claim status (`pending`, `approved`, `rejected`, `paid`)
@@ -39,7 +46,7 @@ Production-style full-stack monorepo for a parametric insurance platform with ro
 ## Business Flow
 1. Worker buys policy from catalog.
 2. Worker triggers event from Claims page.
-3. System creates claim with `under_review` (pending).
+3. System creates an income-loss claim with `under_review` (pending).
 4. Admin reviews and approves/rejects.
 5. If approved, payout is queued.
 6. Worker opens Payouts page, chooses payment mode, and proceeds.
