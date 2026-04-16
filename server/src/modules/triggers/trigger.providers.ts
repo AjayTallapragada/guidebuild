@@ -24,8 +24,11 @@ function stableSeed(text: string) {
   return seed / 1000;
 }
 
+const SWEEP_EVENT_WINDOW_MS = 60 * 60 * 1000;
+
 function createEventKey(source: string, scope: string) {
-  return `${source}-${scope}-${Date.now()}`;
+  const bucket = Math.floor(Date.now() / SWEEP_EVENT_WINDOW_MS);
+  return `${source}-${scope}-${bucket}`;
 }
 
 export function getWeatherSignal(scope: string): TriggerSignal {
