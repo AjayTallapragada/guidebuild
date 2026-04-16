@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 
 export function RegisterPage() {
@@ -16,8 +17,12 @@ export function RegisterPage() {
     try {
       await register({ fullName, email, password });
       navigate("/dashboard");
-    } catch {
-      setError("Registration failed. Try another email.");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message ?? "Registration failed. Try another email.");
+      } else {
+        setError("Registration failed. Try another email.");
+      }
     }
   }
 
