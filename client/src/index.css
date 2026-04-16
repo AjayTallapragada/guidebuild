@@ -259,6 +259,108 @@ button:disabled {
   text-transform: uppercase;
 }
 
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  width: min(100%, 560px);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #d5e2ea;
+  border-radius: 22px;
+  box-shadow: 0 20px 45px rgba(16, 32, 42, 0.12);
+  padding: 2rem;
+}
+
+.auth-card h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 3vw, 2.6rem);
+}
+
+.auth-card p {
+  margin-top: 0;
+}
+
+.auth-card form {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.demo-credentials {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(16, 32, 42, 0.96), rgba(216, 91, 34, 0.95));
+  color: #ffffff;
+}
+
+.demo-credentials__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.95rem;
+}
+
+.demo-credentials__header span {
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.78;
+}
+
+.demo-credentials__header strong {
+  font-size: 1.1rem;
+}
+
+.demo-credentials__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.demo-credentials__card {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.9rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.demo-credentials__card strong {
+  font-size: 1rem;
+  margin-bottom: 0.15rem;
+}
+
+.demo-credentials__card span {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.75;
+}
+
+.demo-credentials__card code {
+  padding: 0.18rem 0.35rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .auth-card {
+    padding: 1.3rem;
+  }
+
+  .demo-credentials__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .status.active,
 .status.approved,
 .status.processed,

@@ -28,7 +28,7 @@ export function LoginPage() {
   return (
     <section className="auth-page">
       <div className="auth-card">
-        <h1>ParcelShield Login</h1>
+        <h1>ParcelShield Demo Login</h1>
         <p>Sign in as a worker or admin to manage policies, claims, dashboards, and payouts.</p>
         <form onSubmit={onSubmit}>
           <label>Email<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required /></label>
@@ -36,18 +36,27 @@ export function LoginPage() {
           {error && <p className="error">{error}</p>}
           <button type="submit">Sign In</button>
         </form>
-        <div style={{ marginTop: "1.5rem", padding: "1rem", backgroundColor: "#f5f5f5", borderRadius: "0.5rem" }}>
-          <p style={{ marginTop: 0, fontWeight: "bold" }}>Demo Credentials (Testing Only)</p>
-          <p style={{ marginBottom: "0.5rem" }}>
-            <strong>Admin:</strong><br />
-            Email: <code>admin@parcelshield.demo</code><br />
-            Password: <code>AdminPass123</code>
-          </p>
-          <p style={{ marginBottom: 0 }}>
-            <strong>Worker:</strong><br />
-            Email: <code>worker@parcelshield.demo</code><br />
-            Password: <code>WorkerPass123</code>
-          </p>
+        <div className="demo-credentials">
+          <div className="demo-credentials__header">
+            <span>Testing Only</span>
+            <strong>Demo Credentials</strong>
+          </div>
+          <div className="demo-credentials__grid">
+            <div className="demo-credentials__card">
+              <strong>Admin</strong>
+              <span>Email</span>
+              <code>admin@parcelshield.demo</code>
+              <span>Password</span>
+              <code>AdminPass123</code>
+            </div>
+            <div className="demo-credentials__card">
+              <strong>Worker</strong>
+              <span>Email</span>
+              <code>worker@parcelshield.demo</code>
+              <span>Password</span>
+              <code>WorkerPass123</code>
+            </div>
+          </div>
         </div>
         <p>New here? <Link to="/register">Create account</Link></p>
       </div>
