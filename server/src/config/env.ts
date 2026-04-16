@@ -13,8 +13,13 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(16),
   JWT_ACCESS_TTL: z.string().default("15m"),
   JWT_REFRESH_TTL: z.string().default("7d"),
-  CLIENT_ORIGIN: z.string().default("http://localhost:5173"),
-  CRON_SECRET: z.string().min(16).optional()
+  CLIENT_ORIGIN: z
+    .string()
+    .default("http://localhost:5173,https://guidebuild-client.vercel.app"),
+  CRON_SECRET: z.string().min(16).optional(),
+  ADMIN_SEED_EMAIL: z.string().email().optional(),
+  ADMIN_SEED_PASSWORD: z.string().min(8).optional(),
+  ADMIN_SEED_NAME: z.string().min(2).default("ParcelShield Admin")
 });
 
 export const env = envSchema.parse(process.env);

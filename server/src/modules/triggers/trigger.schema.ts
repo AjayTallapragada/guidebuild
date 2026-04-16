@@ -5,9 +5,12 @@ export const triggerIngestSchema = z.object({
   eventKey: z.string().min(5).optional(),
   triggerType: z.enum(["weather", "delay", "accident"]),
   severity: z.number().min(0).max(1),
+  scope: z.string().min(2).optional(),
   delayMinutes: z.number().min(0).optional(),
   weatherRiskIndex: z.number().min(0).max(1).optional(),
   collisionDetected: z.boolean().optional(),
+  gpsDriftMeters: z.number().min(0).max(5000).optional(),
+  travelSpeedKph: z.number().min(0).max(200).optional(),
   proofImageUrl: z.string().url().optional()
 });
 

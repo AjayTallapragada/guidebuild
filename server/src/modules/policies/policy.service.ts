@@ -165,6 +165,12 @@ export class PolicyService {
     return rows.map(mapPolicy);
   }
 
+  async listAll() {
+    const db = getDb();
+    const [rows] = await db.query<PolicyRow[]>("SELECT * FROM policies ORDER BY created_at DESC");
+    return rows.map(mapPolicy);
+  }
+
   async getById(userId: string, policyId: string) {
     const db = getDb();
     const [rows] = await db.query<PolicyRow[]>("SELECT * FROM policies WHERE id = ? AND user_id = ? LIMIT 1", [
@@ -222,6 +228,19 @@ export class PolicyService {
       throw new AppError("Policy not found", 404);
     }
     return this.getById(userId, policyId);
+  }
+
+  async cancelByAdmin(policyId: string) {
+    const db = getDb();
+    const [result] = await db.execute<ResultSetHeader>(
+      "UPDATE policies SET status = 'cancelled' WHERE id = ?",
+      [policyId]
+    );
+    if (result.affectedRows === 0) {
+      throw new AppError("Policy not found", 404);
+    }
+    const [rows] = await db.query<PolicyRow[]>("SELECT * FROM policies WHERE id = ? LIMIT 1", [policyId]);
+    return mapPolicy(rows[0]);
   }
 
   async getSubscriptionStatus(userId: string) {

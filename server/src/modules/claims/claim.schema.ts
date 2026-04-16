@@ -6,7 +6,10 @@ export const createClaimSchema = z.object({
   reason: z.string().min(5),
   amount: z.number().min(1),
   eventKey: z.string().min(3).optional(),
-  proofImageUrl: z.string().url().optional()
+  proofImageUrl: z.string().url().optional(),
+  fraudScore: z.number().min(0).max(1).optional(),
+  fraudFlags: z.array(z.string()).optional(),
+  aiRecommendation: z.enum(["approve_fast", "review", "reject"]).optional()
 });
 
 export const adminClaimDecisionSchema = z.object({

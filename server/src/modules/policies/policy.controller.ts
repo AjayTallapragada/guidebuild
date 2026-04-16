@@ -32,7 +32,7 @@ export class PolicyController {
   }
 
   async list(req: Request, res: Response) {
-    const result = await policyService.list(req.auth!.userId);
+    const result = await policyService.listAll();
     res.json(result);
   }
 
@@ -47,7 +47,10 @@ export class PolicyController {
   }
 
   async cancel(req: Request, res: Response) {
-    const result = await policyService.cancel(req.auth!.userId, String(req.params.policyId));
+    const result =
+      req.auth!.role === "admin"
+        ? await policyService.cancelByAdmin(String(req.params.policyId))
+        : await policyService.cancel(req.auth!.userId, String(req.params.policyId));
     res.json(result);
   }
 }

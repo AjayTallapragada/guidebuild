@@ -1,14 +1,17 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-import helmet from "helmet";
 import morgan from "morgan";
-import rateLimit from "express-rate-limit";
+import * as helmetModule from "helmet";
+import * as rateLimitModule from "express-rate-limit";
 import { env } from "./config/env.js";
 import { apiRouter } from "./routes/index.js";
 import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 
 export const app = express();
+
+const helmet = ("default" in helmetModule ? helmetModule.default : helmetModule) as unknown as typeof import("helmet").default;
+const rateLimit = ("default" in rateLimitModule ? rateLimitModule.default : rateLimitModule) as unknown as typeof import("express-rate-limit").default;
 
 function normalizeOrigin(value: string) {
   try {

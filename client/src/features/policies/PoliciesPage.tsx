@@ -129,7 +129,7 @@ export function PoliciesPage() {
                     <h3>{item.name}</h3>
                     <p>{item.occasion}</p>
                     <p>{item.description}</p>
-                    <p>Coverage INR {item.coverageLimit} · Premium INR {item.monthlyBasePremium}/mo</p>
+                    <p>Coverage INR {item.coverageLimit} | Premium INR {item.monthlyBasePremium}/week</p>
                   </div>
                   <button onClick={() => buyPolicy(item.code)}>Buy</button>
                 </article>
@@ -146,8 +146,8 @@ export function PoliciesPage() {
             <article key={policy._id} className="list-item">
               <div>
                 <h3>{policy.name}</h3>
-                <p>{policy.policyType} · {policy.region} · {policy.vehicleType}</p>
-                <p>Coverage INR {policy.coverageLimit} · Premium INR {policy.monthlyBasePremium}/mo</p>
+                <p>{policy.policyType} | {policy.region} | {policy.vehicleType}</p>
+                <p>Coverage INR {policy.coverageLimit} | Premium INR {policy.monthlyBasePremium}/week</p>
                 <span className={`status ${policy.status}`}>{policy.status}</span>
               </div>
               {policy.status === "active" && (

@@ -1,6 +1,7 @@
 import mysql, { Pool } from "mysql2/promise";
 import { RowDataPacket } from "mysql2";
 import { env } from "./env.js";
+import bcrypt from "bcryptjs";
 
 let pool: Pool | null = null;
 
@@ -43,6 +44,9 @@ async function initializeSchema(db: Pool): Promise<void> {
       reason TEXT NOT NULL,
       amount DECIMAL(12,2) NOT NULL,
       proof_image_url VARCHAR(512) NULL,
+      fraud_score DECIMAL(6,4) NOT NULL DEFAULT 0,
+      fraud_flags JSON NULL,
+      ai_recommendation ENUM('approve_fast', 'review', 'reject') NOT NULL DEFAULT 'review',
       status ENUM('triggered', 'under_review', 'approved', 'rejected', 'paid') NOT NULL DEFAULT 'triggered',
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -58,6 +62,9 @@ async function initializeSchema(db: Pool): Promise<void> {
       status ENUM('queued', 'processed') NOT NULL DEFAULT 'queued',
       payment_mode ENUM('upi', 'bank_account', 'online_wallet') NULL,
       payment_handle VARCHAR(120) NULL,
+      gateway VARCHAR(64) NULL,
+      gateway_reference VARCHAR(120) NULL,
+      eta_minutes INT NOT NULL DEFAULT 5,
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       CONSTRAINT fk_payouts_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -87,6 +94,36 @@ async function initializeSchema(db: Pool): Promise<void> {
     await db.query("ALTER TABLE claims ADD COLUMN proof_image_url VARCHAR(512) NULL AFTER amount");
   }
 
+  const [fraudScoreRows] = await db.query<RowDataPacket[]>(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'claims' AND COLUMN_NAME = 'fraud_score'
+     LIMIT 1`
+  );
+  if (fraudScoreRows.length === 0) {
+    await db.query("ALTER TABLE claims ADD COLUMN fraud_score DECIMAL(6,4) NOT NULL DEFAULT 0 AFTER proof_image_url");
+  }
+
+  const [fraudFlagsRows] = await db.query<RowDataPacket[]>(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'claims' AND COLUMN_NAME = 'fraud_flags'
+     LIMIT 1`
+  );
+  if (fraudFlagsRows.length === 0) {
+    await db.query("ALTER TABLE claims ADD COLUMN fraud_flags JSON NULL AFTER fraud_score");
+  }
+
+  const [aiRecommendationRows] = await db.query<RowDataPacket[]>(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'claims' AND COLUMN_NAME = 'ai_recommendation'
+     LIMIT 1`
+  );
+  if (aiRecommendationRows.length === 0) {
+    await db.query("ALTER TABLE claims ADD COLUMN ai_recommendation ENUM('approve_fast', 'review', 'reject') NOT NULL DEFAULT 'review' AFTER fraud_flags");
+  }
+
   const [paymentModeRows] = await db.query<RowDataPacket[]>(
     `SELECT COLUMN_NAME
      FROM INFORMATION_SCHEMA.COLUMNS
@@ -106,6 +143,56 @@ async function initializeSchema(db: Pool): Promise<void> {
   if (paymentHandleRows.length === 0) {
     await db.query("ALTER TABLE payouts ADD COLUMN payment_handle VARCHAR(120) NULL AFTER payment_mode");
   }
+
+  const [gatewayRows] = await db.query<RowDataPacket[]>(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'payouts' AND COLUMN_NAME = 'gateway'
+     LIMIT 1`
+  );
+  if (gatewayRows.length === 0) {
+    await db.query("ALTER TABLE payouts ADD COLUMN gateway VARCHAR(64) NULL AFTER payment_handle");
+  }
+
+  const [gatewayReferenceRows] = await db.query<RowDataPacket[]>(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'payouts' AND COLUMN_NAME = 'gateway_reference'
+     LIMIT 1`
+  );
+  if (gatewayReferenceRows.length === 0) {
+    await db.query("ALTER TABLE payouts ADD COLUMN gateway_reference VARCHAR(120) NULL AFTER gateway");
+  }
+
+  const [etaRows] = await db.query<RowDataPacket[]>(
+    `SELECT COLUMN_NAME
+     FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'payouts' AND COLUMN_NAME = 'eta_minutes'
+     LIMIT 1`
+  );
+  if (etaRows.length === 0) {
+    await db.query("ALTER TABLE payouts ADD COLUMN eta_minutes INT NOT NULL DEFAULT 5 AFTER gateway_reference");
+  }
+}
+
+async function seedAdminIfConfigured(db: Pool): Promise<void> {
+  if (!env.ADMIN_SEED_EMAIL || !env.ADMIN_SEED_PASSWORD) {
+    return;
+  }
+
+  const [existingRows] = await db.query<RowDataPacket[]>("SELECT id FROM users WHERE email = ? LIMIT 1", [
+    env.ADMIN_SEED_EMAIL.toLowerCase()
+  ]);
+
+  if (existingRows.length > 0) {
+    return;
+  }
+
+  const passwordHash = await bcrypt.hash(env.ADMIN_SEED_PASSWORD, 12);
+  await db.execute(
+    "INSERT INTO users (email, password_hash, full_name, role) VALUES (?, ?, ?, 'admin')",
+    [env.ADMIN_SEED_EMAIL.toLowerCase(), passwordHash, env.ADMIN_SEED_NAME]
+  );
 }
 
 export async function connectDatabase(): Promise<void> {
@@ -137,6 +224,7 @@ export async function connectDatabase(): Promise<void> {
 
   await pool.query("SELECT 1");
   await initializeSchema(pool);
+  await seedAdminIfConfigured(pool);
 }
 
 export async function disconnectDatabase(): Promise<void> {

@@ -1,7 +1,7 @@
 import { AppError } from "../../utils/appError.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { getDb } from "../../config/db.js";
-import { ClaimStatus } from "./claim.model.js";
+import { AiRecommendation, ClaimStatus } from "./claim.model.js";
 import { writeAuditEvent } from "../audit/audit.service.js";
 import { payoutService } from "../payouts/payout.service.js";
 
@@ -15,10 +15,26 @@ type ClaimRow = RowDataPacket & {
   trigger_score: number;
   reason: string;
   amount: number;
+  fraud_score: number;
+  fraud_flags: string | null;
+  ai_recommendation: AiRecommendation;
   status: ClaimStatus;
   created_at: Date;
   updated_at: Date;
 };
+
+function parseFraudFlags(value: unknown) {
+  if (!value) {
+    return [] as string[];
+  }
+  if (Array.isArray(value)) {
+    return value as string[];
+  }
+  if (typeof value === "string") {
+    return JSON.parse(value) as string[];
+  }
+  return [] as string[];
+}
 
 export function mapClaim(row: ClaimRow) {
   return {
@@ -31,6 +47,9 @@ export function mapClaim(row: ClaimRow) {
     triggerScore: Number(row.trigger_score),
     reason: row.reason,
     amount: Number(row.amount),
+    fraudScore: Number(row.fraud_score ?? 0),
+    fraudFlags: parseFraudFlags(row.fraud_flags),
+    aiRecommendation: row.ai_recommendation ?? "review",
     status: row.status,
     createdAt: row.created_at,
     updatedAt: row.updated_at
@@ -66,6 +85,9 @@ export class ClaimService {
     amount: number;
     eventKey?: string;
     proofImageUrl?: string;
+    fraudScore?: number;
+    fraudFlags?: string[];
+    aiRecommendation?: AiRecommendation;
   }) {
     const db = getDb();
     const [subscriptionRows] = await db.query<RowDataPacket[]>(
@@ -79,9 +101,21 @@ export class ClaimService {
     const eventKey = payload.eventKey ?? `manual-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
     const [result] = await db.execute<ResultSetHeader>(
-      `INSERT INTO claims (user_id, policy_id, event_key, trigger_type, trigger_score, reason, amount, proof_image_url, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'under_review')`,
-      [userId, payload.policyId, eventKey, payload.triggerType, 0.5, payload.reason, payload.amount, payload.proofImageUrl ?? null]
+      `INSERT INTO claims (user_id, policy_id, event_key, trigger_type, trigger_score, reason, amount, proof_image_url, fraud_score, fraud_flags, ai_recommendation, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'under_review')`,
+      [
+        userId,
+        payload.policyId,
+        eventKey,
+        payload.triggerType,
+        0.5,
+        payload.reason,
+        payload.amount,
+        payload.proofImageUrl ?? null,
+        payload.fraudScore ?? 0.2,
+        JSON.stringify(payload.fraudFlags ?? []),
+        payload.aiRecommendation ?? "review"
+      ]
     );
 
     const claim = await this.getById(userId, "worker", String(result.insertId));
@@ -91,7 +125,7 @@ export class ClaimService {
       action: "claim.created",
       resourceType: "claim",
       resourceId: claim._id,
-      metadata: { triggerType: payload.triggerType }
+      metadata: { triggerType: payload.triggerType, aiRecommendation: payload.aiRecommendation ?? "review" }
     });
 
     return claim;

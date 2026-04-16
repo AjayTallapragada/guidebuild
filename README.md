@@ -15,12 +15,18 @@ Production-style full-stack monorepo for a parametric insurance platform with ro
 - View own active policies
 - Cancel own policies
 - Simulate trigger events to generate claims
+- Run automated disruption sweeps for a delivery zone
 - Optionally attach proof image URL while creating trigger claim
 - Track claim status (`pending`, `approved`, `rejected`, `paid`)
+- View AI fraud score, fraud flags, and auto-approval recommendation
 - View payouts and complete payout using payment mode:
   - `upi`
   - `bank_account`
   - `online_wallet`
+- Choose a simulated gateway:
+  - `upi_simulator`
+  - `razorpay_test`
+  - `stripe_sandbox`
 
 ### Admin Module
 - View all claims across workers
@@ -28,6 +34,7 @@ Production-style full-stack monorepo for a parametric insurance platform with ro
 - Clear claims (admin-only)
 - View all payouts across workers
 - View payout owner (worker ID) and payment status
+- View loss ratio, fraud pressure, trigger mix, and next-week prediction dashboard
 
 ## Business Flow
 1. Worker buys policy from catalog.
@@ -37,6 +44,20 @@ Production-style full-stack monorepo for a parametric insurance platform with ro
 5. If approved, payout is queued.
 6. Worker opens Payouts page, chooses payment mode, and proceeds.
 7. Payout becomes `processed`, claim becomes `paid`.
+
+## Phase 3 Highlights
+- Advanced fraud checks:
+  - GPS spoofing suspicion from high drift
+  - Speed / route outlier detection
+  - Fake weather claim checks against deterministic historical baseline
+  - Missing-proof escalation for severe claims
+- Instant payout simulator:
+  - UPI simulator
+  - Razorpay test flow
+  - Stripe sandbox flow
+- Intelligent dashboards:
+  - Worker: earnings protected, active weekly coverage, recent AI decisions
+  - Admin: loss ratio, flagged claims, seven-day fraud trend, next-week claim prediction
 
 ## Repository Structure
 - `client/` React frontend
@@ -55,6 +76,8 @@ docker compose up -d
 copy server/.env.example server/.env
 copy client/.env.example client/.env
 ```
+
+Optional admin seed values in `server/.env` let you log in as an admin immediately after startup.
 
 ### 3) Install dependencies
 ```bash
@@ -165,3 +188,31 @@ Notes:
   - `https://<backend-project>.vercel.app/api/v1/health`
 - Confirm cron endpoint auth works manually:
   - `GET /api/cron/trigger-sweep` with header `Authorization: Bearer <CRON_SECRET>`
+
+## Railway Backend Deployment
+
+The repo now includes a root `railway.toml` that builds the `server` workspace and exposes:
+- Health check: `/api/v1/health`
+- Start command: `npm run start -w server`
+
+Recommended Railway environment variables:
+- `NODE_ENV=production`
+- `PORT=4000`
+- `MYSQL_HOST`
+- `MYSQL_PORT`
+- `MYSQL_USER`
+- `MYSQL_PASSWORD`
+- `MYSQL_DATABASE`
+- `JWT_ACCESS_SECRET`
+- `JWT_REFRESH_SECRET`
+- `JWT_ACCESS_TTL`
+- `JWT_REFRESH_TTL`
+- `CLIENT_ORIGIN`
+- `CRON_SECRET`
+- `ADMIN_SEED_EMAIL`
+- `ADMIN_SEED_PASSWORD`
+- `ADMIN_SEED_NAME`
+
+Submission support files:
+- `docs/FINAL_SUBMISSION_PACKAGE.md`
+- `docs/PITCH_DECK_OUTLINE.md`

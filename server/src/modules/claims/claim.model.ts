@@ -1,4 +1,5 @@
 export type ClaimStatus = "triggered" | "under_review" | "approved" | "rejected" | "paid";
+export type AiRecommendation = "approve_fast" | "review" | "reject";
 
 export interface IClaim {
   userId: string;
@@ -9,6 +10,9 @@ export interface IClaim {
   triggerScore: number;
   reason: string;
   amount: number;
+  fraudScore: number;
+  fraudFlags: string[];
+  aiRecommendation: AiRecommendation;
   status: ClaimStatus;
   createdAt: Date;
   updatedAt: Date;

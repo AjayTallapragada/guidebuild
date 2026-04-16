@@ -1,8 +1,11 @@
 :root {
-  font-family: "Segoe UI", "Avenir Next", sans-serif;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
   line-height: 1.5;
   color: #10202a;
-  background: radial-gradient(circle at 10% 10%, #ffe8ce 0%, #f5f9fc 35%, #e8f0f4 100%);
+  background:
+    radial-gradient(circle at top left, rgba(255, 207, 136, 0.65), transparent 28%),
+    radial-gradient(circle at top right, rgba(32, 110, 138, 0.14), transparent 32%),
+    linear-gradient(180deg, #f7fbfd 0%, #edf4f7 100%);
 }
 
 * {
@@ -90,6 +93,86 @@ a {
   color: #f3f7fa;
 }
 
+.hero-panel {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  align-items: stretch;
+  padding: 1.4rem;
+  border-radius: 22px;
+  color: #fff7f0;
+  box-shadow: 0 20px 45px rgba(16, 32, 42, 0.16);
+}
+
+.hero-panel.worker {
+  background: linear-gradient(135deg, #10202a 0%, #c5572a 100%);
+}
+
+.hero-panel.admin {
+  background: linear-gradient(135deg, #0d2d33 0%, #1b7b70 100%);
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  opacity: 0.82;
+}
+
+.hero-stats {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.hero-stats div,
+.metric-chip {
+  display: grid;
+  gap: 0.2rem;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  padding: 0.9rem;
+}
+
+.hero-stats strong,
+.metric-chip strong {
+  font-size: 1.45rem;
+}
+
+.metric-chip.dark {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.metric-card {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid #d5e2ea;
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: 0 14px 32px rgba(16, 32, 42, 0.08);
+}
+
+.metric-card span {
+  color: #5d7482;
+  font-size: 0.9rem;
+}
+
+.metric-card strong {
+  display: block;
+  margin: 0.35rem 0;
+  font-size: 1.9rem;
+}
+
+.dashboard-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -150,6 +233,24 @@ button:disabled {
   justify-content: space-between;
   gap: 0.75rem;
   align-items: center;
+}
+
+.list-item.compact {
+  padding: 0.85rem 0.95rem;
+}
+
+.list-item.dark {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.claims-item,
+.payouts-item {
+  align-items: flex-start;
+}
+
+.payout-form {
+  min-width: 280px;
 }
 
 .status {
@@ -223,6 +324,7 @@ button:disabled {
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .checkbox {
@@ -231,11 +333,18 @@ button:disabled {
   gap: 0.5rem;
 }
 
+.checkbox input {
+  width: auto;
+}
+
 @media (max-width: 920px) {
   .two-col {
     grid-template-columns: 1fr;
   }
 
+  .hero-panel,
+  .dashboard-grid,
+  .kpi-grid,
   .cards-grid {
     grid-template-columns: 1fr;
   }
