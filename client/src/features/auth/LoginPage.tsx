@@ -9,6 +9,15 @@ export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  async function copyToClipboard(value: string, key: string) {
+    await navigator.clipboard.writeText(value);
+    setCopiedKey(key);
+    window.setTimeout(() => {
+      setCopiedKey((currentKey) => (currentKey === key ? null : currentKey));
+    }, 1500);
+  }
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -44,19 +53,42 @@ export function LoginPage() {
           <div className="demo-credentials__grid">
             <div className="demo-credentials__card">
               <strong>Admin</strong>
-              <span>Email</span>
-              <code>admin@parcelshield.demo</code>
-              <span>Password</span>
-              <code>AdminPass123</code>
+              <div className="demo-credentials__row">
+                <div>
+                  <span>Email</span>
+                  <code>admin@parcelshield.demo</code>
+                </div>
+                <button type="button" className="demo-credentials__copy" onClick={() => copyToClipboard("admin@parcelshield.demo", "admin-email")}>Copy</button>
+              </div>
+              <div className="demo-credentials__row">
+                <div>
+                  <span>Password</span>
+                  <code>AdminPass123</code>
+                </div>
+                <button type="button" className="demo-credentials__copy" onClick={() => copyToClipboard("AdminPass123", "admin-password")}>Copy</button>
+              </div>
             </div>
             <div className="demo-credentials__card">
               <strong>Worker</strong>
-              <span>Email</span>
-              <code>worker@parcelshield.demo</code>
-              <span>Password</span>
-              <code>WorkerPass123</code>
+              <div className="demo-credentials__row">
+                <div>
+                  <span>Email</span>
+                  <code>worker@parcelshield.demo</code>
+                </div>
+                <button type="button" className="demo-credentials__copy" onClick={() => copyToClipboard("worker@parcelshield.demo", "worker-email")}>Copy</button>
+              </div>
+              <div className="demo-credentials__row">
+                <div>
+                  <span>Password</span>
+                  <code>WorkerPass123</code>
+                </div>
+                <button type="button" className="demo-credentials__copy" onClick={() => copyToClipboard("WorkerPass123", "worker-password")}>Copy</button>
+              </div>
             </div>
           </div>
+          <p className="demo-credentials__status" aria-live="polite">
+            {copiedKey ? "Copied to clipboard." : "Click Copy to paste a value into your login form."}
+          </p>
         </div>
         <p>New here? <Link to="/register">Create account</Link></p>
       </div>

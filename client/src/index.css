@@ -351,9 +351,46 @@ button:disabled {
   word-break: break-word;
 }
 
+.demo-credentials__row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.demo-credentials__row > div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.demo-credentials__copy {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.demo-credentials__copy:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.demo-credentials__status {
+  margin: 0.9rem 0 0;
+  font-size: 0.9rem;
+  opacity: 0.88;
+}
+
 @media (max-width: 640px) {
   .auth-card {
     padding: 1.3rem;
+  }
+
+  .demo-credentials__row {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .demo-credentials__grid {
