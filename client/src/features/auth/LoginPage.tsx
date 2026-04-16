@@ -36,7 +36,19 @@ export function LoginPage() {
           {error && <p className="error">{error}</p>}
           <button type="submit">Sign In</button>
         </form>
-        <p>Admin demo email: <strong>admin@parcelshield.demo</strong></p>
+        <div style={{ marginTop: "1.5rem", padding: "1rem", backgroundColor: "#f5f5f5", borderRadius: "0.5rem" }}>
+          <p style={{ marginTop: 0, fontWeight: "bold" }}>Demo Credentials (Testing Only)</p>
+          <p style={{ marginBottom: "0.5rem" }}>
+            <strong>Admin:</strong><br />
+            Email: <code>admin@parcelshield.demo</code><br />
+            Password: <code>AdminPass123</code>
+          </p>
+          <p style={{ marginBottom: 0 }}>
+            <strong>Worker:</strong><br />
+            Email: <code>worker@parcelshield.demo</code><br />
+            Password: <code>WorkerPass123</code>
+          </p>
+        </div>
         <p>New here? <Link to="/register">Create account</Link></p>
       </div>
     </section>
